@@ -1,2 +1,4 @@
-import {ready,db} from '../lib/db';
-await ready();console.log('Migrations complete.');await db.destroy();
+import { ready, db } from "../lib/db";
+await ready();
+console.log("Migrations complete.");
+await db.destroy();

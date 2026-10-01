@@ -13,29 +13,32 @@
     "migrate": "node --import tsx scripts/migrate.ts",
     "demo": "node --import tsx scripts/demo.ts",
     "recover": "node --import tsx scripts/recover.ts",
-    "secrets": "node scripts/secrets.mjs"
+    "secrets": "node scripts/secrets.mjs",
+    "test:browser": "node --import tsx scripts/browser.ts",
+    "format": "prettier --write ."
   },
   "dependencies": {
+    "better-sqlite3": "13.0.3",
+    "knex": "3.3.0",
+    "lucide-react": "^0.577.0",
     "next": "16.3.8",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "knex": "3.3.0",
-    "better-sqlite3": "13.0.3",
-    "zod": "^4.0.0",
-    "lucide-react": "^0.577.0"
+    "zod": "^4.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.9.0",
+    "@playwright/test": "^1.58.0",
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "@types/better-sqlite3": "^7.6.13",
-    "tsx": "^4.20.0",
-    "tailwindcss": "^4.1.0",
-    "@tailwindcss/postcss": "^4.1.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "16.3.8",
-    "@playwright/test": "^1.58.0"
+    "prettier": "^3.9.9",
+    "tailwindcss": "^4.1.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
   },
   "allowScripts": {
     "better-sqlite3@13.0.3": true,

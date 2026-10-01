@@ -1,10 +1,113 @@
-import {z} from 'zod';
-const text=z.string().trim().max(2000).default('');
-export const methodSchema=z.object({type:z.enum(['email','phone','social','website','custom']),value:z.string().trim().min(1).max(500)}).superRefine((m,c)=>{const ok=m.type==='email'?z.email().safeParse(m.value).success:m.type==='phone'?/^\+?[\d ()-]{7,30}$/.test(m.value):['social','website'].includes(m.type)?(()=>{try{return ['https:','http:'].includes(new URL(m.value).protocol);}catch{return false;}})():true;if(!ok)c.addIssue({code:'custom',message:'Invalid '+m.type});});
-export const profileSchema=z.object({name:z.string().trim().min(1).max(120),location:text,interests:text,occupation:text,background:text});
-export const contactSchema=z.object({name:z.string().trim().min(1).max(120),type:z.enum(['person','organization','business','online']).default('person'),methods:z.array(methodSchema).min(1).max(12),location:text,occupation:text,organization:text,skills:text,interests:text,met:text,relationship:text,shared:text,tags:text,notes:text,lastInteraction:z.string().refine(v=>v===''||(/^\d{4}-\d{2}-\d{2}$/.test(v)&&!Number.isNaN(Date.parse(v))),'Invalid date').default(''),interactionNotes:text,favorite:z.boolean().default(false)});
-export type Contact=z.infer<typeof contactSchema>&{id:string};
-export type Profile=z.infer<typeof profileSchema>;
-export const credentials=z.object({username:z.string().trim().min(3).max(80),password:z.string().min(12).max(128)});
-export const settingsSchema=z.object({provider:z.enum(['openai','gemini','custom']),model:z.string().trim().min(1).max(120),endpoint:z.string().max(1000),apiKey:z.string().max(500).optional(),removeKey:z.boolean().optional()});
-export const backupSchema=z.object({version:z.literal(1),profile:profileSchema,contacts:z.array(contactSchema.extend({id:z.string().uuid()})).max(1000),conversations:z.array(z.object({id:z.string().uuid(),title:z.string().max(120),messages:z.array(z.object({role:z.enum(['user','assistant']),text:z.string().max(4000),ids:z.array(z.string().uuid()).max(12)})).max(200)})).max(100).optional()}).strict().superRefine((b,c)=>{if(new Set(b.contacts.map(v=>v.id)).size!==b.contacts.length)c.addIssue({code:'custom',message:'Duplicate contact IDs'});if(b.conversations&&new Set(b.conversations.map(v=>v.id)).size!==b.conversations.length)c.addIssue({code:'custom',message:'Duplicate conversation IDs'});});
+import { z } from "zod";
+const text = z.string().trim().max(2000).default("");
+export const methodSchema = z
+  .object({
+    type: z.enum(["email", "phone", "social", "website", "custom"]),
+    value: z.string().trim().min(1).max(500),
+  })
+  .superRefine((m, c) => {
+    const ok =
+      m.type === "email"
+        ? z.email().safeParse(m.value).success
+        : m.type === "phone"
+          ? /^\+?[\d ()-]{7,30}$/.test(m.value) &&
+            m.value.replace(/\D/g, "").length >= 7
+          : ["social", "website"].includes(m.type)
+            ? (() => {
+                try {
+                  return ["https:", "http:"].includes(
+                    new URL(m.value).protocol,
+                  );
+                } catch {
+                  return false;
+                }
+              })()
+            : true;
+    if (!ok) c.addIssue({ code: "custom", message: "Invalid " + m.type });
+  });
+export const profileSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  location: text,
+  interests: text,
+  occupation: text,
+  background: text,
+});
+export const contactSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  type: z
+    .enum(["person", "organization", "business", "online"])
+    .default("person"),
+  methods: z.array(methodSchema).min(1).max(12),
+  location: text,
+  occupation: text,
+  organization: text,
+  skills: text,
+  interests: text,
+  met: text,
+  relationship: text,
+  shared: text,
+  tags: text,
+  notes: text,
+  lastInteraction: z
+    .string()
+    .refine(
+      (v) =>
+        v === "" ||
+        (/^\d{4}-\d{2}-\d{2}$/.test(v) &&
+          !Number.isNaN(Date.parse(v)) &&
+          new Date(v).toISOString().slice(0, 10) === v),
+      "Invalid date",
+    )
+    .default(""),
+  interactionNotes: text,
+  favorite: z.boolean().default(false),
+});
+export type Contact = z.infer<typeof contactSchema> & { id: string };
+export type Profile = z.infer<typeof profileSchema>;
+export const credentials = z.object({
+  username: z.string().trim().min(3).max(80),
+  password: z.string().min(12).max(128),
+});
+export const settingsSchema = z.object({
+  provider: z.enum(["openai", "gemini", "custom"]),
+  model: z.string().trim().min(1).max(120),
+  endpoint: z.string().max(1000),
+  apiKey: z.string().max(500).optional(),
+  removeKey: z.boolean().optional(),
+});
+export const backupSchema = z
+  .object({
+    version: z.literal(1),
+    profile: profileSchema,
+    contacts: z
+      .array(contactSchema.extend({ id: z.string().uuid() }))
+      .max(1000),
+    conversations: z
+      .array(
+        z.object({
+          id: z.string().uuid(),
+          title: z.string().max(120),
+          messages: z
+            .array(
+              z.object({
+                role: z.enum(["user", "assistant"]),
+                text: z.string().max(4000),
+                ids: z.array(z.string().uuid()).max(12),
+              }),
+            )
+            .max(200),
+        }),
+      )
+      .max(100)
+      .optional(),
+  })
+  .strict()
+  .superRefine((b, c) => {
+    if (new Set(b.contacts.map((v) => v.id)).size !== b.contacts.length)
+      c.addIssue({ code: "custom", message: "Duplicate contact IDs" });
+    if (
+      b.conversations &&
+      new Set(b.conversations.map((v) => v.id)).size !== b.conversations.length
+    )
+      c.addIssue({ code: "custom", message: "Duplicate conversation IDs" });
+  });

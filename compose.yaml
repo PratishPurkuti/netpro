@@ -1,0 +1,18 @@
+services:
+  netpro:
+    build: .
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      DATABASE_PATH: /app/data/netpro.sqlite
+      NETPRO_ENCRYPTION_KEY: ${NETPRO_ENCRYPTION_KEY:?Set NETPRO_ENCRYPTION_KEY in .env}
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      ALLOW_PRIVATE_AI: ${ALLOW_PRIVATE_AI:-false}
+    volumes:
+      - netpro-data:/app/data
+      - netpro-backups:/app/backups
+    restart: unless-stopped
+volumes:
+  netpro-data:
+  netpro-backups:

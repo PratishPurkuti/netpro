@@ -1,0 +1,9 @@
+import {contactSchema,type Contact} from './schema';
+export const demoContacts:Contact[]=[
+ {name:'Maya Chen',location:'Wichita Falls',occupation:'Gallery educator',organization:'River House Arts (demo)',skills:'Art, gallery tours, printmaking',interests:'Painting, hiking',met:'Met at a synthetic community workshop in April 2026',relationship:'Workshop acquaintance',tags:'arts, local',favorite:true,methods:[{type:'email',value:'maya@example.com'}]},
+ {name:'Jordan Ellis',location:'Austin',occupation:'Product designer',skills:'Design systems, prototyping',interests:'Painting, art',met:'Met through a synthetic university design club',relationship:'Former classmate',methods:[{type:'custom',value:'Through the university design club'}]},
+ {name:'Sam Rivera',location:'Wichita Falls',occupation:'Software engineer',skills:'Programming, TypeScript, databases',interests:'Cycling',met:'Synthetic local tech meetup',tags:'technology',methods:[{type:'website',value:'https://example.com/sam'}]},
+ {name:'Northside Makers',type:'organization',location:'Wichita Falls',skills:'Woodworking, ceramics, art workshops',organization:'Synthetic community makerspace',notes:'Hosts beginner classes; ask about current availability.',tags:'creative, community',methods:[{type:'website',value:'https://example.com/makers'}]},
+ {name:'Avery Brooks',type:'online',location:'Chicago',occupation:'Research librarian',skills:'Research, history, archives',interests:'Architecture',relationship:'Online book club connection',methods:[{type:'custom',value:'Through the synthetic book club forum'}]},
+ {name:'Cedar & Co.',type:'business',location:'Dallas',skills:'Small business accounting, bookkeeping',notes:'Synthetic business example, not a real recommendation.',methods:[{type:'email',value:'hello@example.com'}]}
+].map((c,i)=>({...contactSchema.parse(c),id:'00000000-0000-4000-8000-'+String(i+1).padStart(12,'0')}));
